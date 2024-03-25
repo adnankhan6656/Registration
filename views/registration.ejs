@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <form method="post" class="max-w-sm  p-3 flex flex-col shadow-lg mx-auto mt-10" id="registerationForm" >
+        <h1 class="text-md font-medium  text-center">Registration Form</h1>
+        
+        <input type="text" class="border-b-2 p-2 focus:outline-none mt-2" id="firstname" placeholder="FirstName" name="firstName">
+        <input type="text" class="border-b-2 p-2 focus:outline-none mt-2" id="lastname" placeholder="Last Name" name="lastName">
+        <input type="email" class="border-b-2 p-2 focus:outline-none mt-2" id="email" placeholder="Enter Email" name="email">
+        
+        <input type="password"  class="border-b-2 p-2 mt-2 focus:outline-none" id="password" placeholder="Enter a Password" name="password">
+        <span class=" text-red-500" id="error">Adnan</span>
+        <span class=" text-blue-500 underline-offset-1 cursor-pointer"  id="activationLink" onclick="activateaccount()"></span>
+        <button class="self-center bg-black text-white p-2 mt-2" onclick="Register()" >Register</button>
+    </form>
+</body>
+
+<script>
+let activationLink;
+    async function activateaccount(){
+    let response=await fetch(`${activationLink}`, {
+        method: 'GET',
+        headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+})
+let data=await response.json();
+if(data.success){
+   alert("user Registration Done Successfully")
+}
+    }
+  async  function Register(){
+  event.preventDefault()
+         let spans=document.querySelectorAll("span");
+         spans.forEach((span)=>{
+            span.style.display="none";
+         })
+        let form=document.getElementById("registerationForm");
+        let registerationFormData=new FormData(form);
+       let response=  await fetch('/register', {
+        method: 'POST',
+        headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: new URLSearchParams(registerationFormData)
+        
+    })
+    let data=await response.json();
+  
+    if(!data.success){
+    let errorele=document.getElementById("error");
+    errorele.style.display="block";
+    errorele.innerHTML=data.message
+    }
+    
+    if(data.success){
+    let activationLinkEle= document.getElementById("activationLink");
+    activationLinkEle.style.display="block";
+    activationLinkEle.innerHTML=data.activationLink;
+    activationLink=data.activationLink;
+    }
+    }
+</script>
+</html>
